@@ -1,0 +1,32 @@
+#version 330 core
+
+// Interpolated values from the vertex shaders
+in vec2 UV;
+in vec3 normal1;
+in vec3 lightDir;
+
+// Ouput data
+out vec3 color;
+
+// Values that stay constant for the whole mesh.
+uniform sampler2D myTextureSampler;
+
+void main(){
+
+	// Output color = color of the texture at the specified UV
+	//color = texture( myTextureSampler, UV ).rgb;
+
+
+	vec3 diffuseColor = texture( myTextureSampler, UV ).rgb;
+    const vec3 specColor = vec3(0.5, 0.5, 0.5);
+    
+    //PHONG brdf
+    vec3 viewDirection = lightDir;
+    
+    //float ambientSharing =
+    float exponent = 24.0;
+    float lambertianShading = clamp( dot(lightDir, normal1), 0.0, 1.0 );
+    float phongBrdf = pow( clamp(dot(reflect(lightDir,normal1), viewDirection), 0.0, 1.0), exponent);
+    
+    color = vec3( lambertianShading * diffuseColor + phongBrdf * specColor );
+}
